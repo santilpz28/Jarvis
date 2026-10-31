@@ -8,6 +8,18 @@ Zero-Trust tunnel.
 
 ---
 
+<p align="center">
+  <img src="docs/architecture.png" alt="How JARVIS is wired" width="100%">
+</p>
+
+### How JARVIS is wired
+
+JARVIS is an OpenClaw agent that runs on **local LLMs**, so code-audit data never leaves the workstation. From there it reaches a hardened VPS through an encrypted Zero-Trust tunnel and acts on what it finds: a health check every 15 minutes restarts dead containers, verifies the API and UI, checks the gateway process and drains the pending-delivery queue; the queue consumer then sends each report and its audio briefing over Telegram, deduplicating as it goes. Apache terminates TLS in front, with fail2ban and UFW behind it.
+
+
+
+---
+
 ## What it does
 
 JARVIS is an OpenClaw-based agent wired to a production VPS. It watches a
