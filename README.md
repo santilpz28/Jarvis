@@ -100,6 +100,44 @@ report that the VPS died.
 **Rule:** the alert path needs a route that does not traverse the failing
 component.
 
+### 7. A disabled service must not be resurrected by its own watchdog
+
+The clone's watchdog cleaned the stale lock every 15 minutes. The health check
+then saw "no gateway" and started it. The user had turned the bot off, and it
+came back on its own — still polling, still burning tokens.
+
+**Rule:** a user decision outranks auto-recovery. The watchdog and the health
+check both check an explicit `disabled` flag first, and the start script
+refuses to launch while it is set.
+
+### 8. Never hardcode a server's address in a public repository
+
+`chainguard_sub_issue_cert.sh` shipped the clon's public IP in the source.
+Anyone scanning GitHub would have a working target for free.
+
+**Rule:** read it from the environment (`CLONE_EXPECT_IP`) or auto-detect it at
+runtime. A public repo is a search index.
+
+---
+
+## Configuration
+
+`chainguard_sub_issue_cert.sh` needs to know the host's public IP to verify
+that DNS already points at this machine. It reads it from the environment, and
+falls back to auto-detection:
+
+```bash
+# explicit (recommended in cron/systemd)
+export CLONE_EXPECT_IP="<host ip>"
+
+# or let it self-detect — only meaningful when run ON the server
+./chainguard_sub_issue_cert.sh
+```
+
+Auto-detection resolves to the *machine's own* public IP, so the script is
+only correct when executed on the server itself. Everywhere else, set
+`CLONE_EXPECT_IP` explicitly.
+
 ---
 
 ## Stack
