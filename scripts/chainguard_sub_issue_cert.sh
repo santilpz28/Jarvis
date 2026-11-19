@@ -3,7 +3,15 @@
 # Idempotente: solo acts si el DNS ya resuelve a este host.
 set -euo pipefail
 HOST="chainguard.chain-cortex.com"
-EXPECT_IP="212.227.90.79"
+# IP esperada del host: se toma del entorno (CLONE_EXPECT_IP) o, si no se
+# define, se autodetecta de la IP publica del host. No se hardcodea en el
+# codigo: publicar la IP del servidor en un repo publico es regalarle el
+# objetivo a cualquiera que escanee repos.
+EXPECT_IP="${CLONE_EXPECT_IP:-$(curl -s --max-time 5 https://api.ipify.org 2>/dev/null || true)}"
+if [ -z "$EXPECT_IP" ]; then
+  echo "[SKIP] no se pudo determinar la IP esperada (define CLONE_EXPECT_IP)"
+  exit 4
+fi
 APACHE_LOG_DIR="/var/log/apache2"
 
 # 1) DNS check

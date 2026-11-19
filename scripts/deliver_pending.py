@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Consumidor de la cola pending_delivery.json — entrega directa a Telegram.
 
-Diseñado para correr en el servidor del clon (212.227.90.79) como usuario jarvis.
+Diseñado para correr en el servidor del clon, como usuario de servicio.
 Lee el token del bot desde openclaw.json del clon, envía el reporte + audio a
 Santi y marca delivered=True.
 
